@@ -18,8 +18,8 @@ session_start();
             }
         }
     }
-    define('URL_SYS', 'http://' . $_SERVER['SERVER_NAME'] . '/' . $complementoPasta);
-    //define('URL_SYS', 'http://' . $_SERVER['SERVER_NAME'] . '/app/');
+    // define('URL_SYS', 'http://' . $_SERVER['SERVER_NAME'] . '/' . $complementoPasta);
+    define('URL_SYS', 'http://' . $_SERVER['SERVER_NAME'] . '/app/');
     define('ROOT_SYS', str_replace('_inc', '', dirname(__FILE__)));
 // --
 
@@ -41,7 +41,8 @@ define('URL_SYS_LOGO', URL_SYS_THEME . '_img/logo-interna.png');
 define('URL_STATIC_GN', URL_STATIC . '_genesis/');
 define('URL_SIGNIN', URL_SYS . 'login/login.php');
 define('URL_UPLOAD', URL_SYS . '_upload/');
-define('URL_API', str_replace('app', 'api', URL_SYS));
+// define('URL_API', str_replace('app', 'api', URL_SYS));
+define('URL_API', 'http://simplesvetapi.herokuapp.com/');
 
 //Constantes caminho absoluto
 define('ROOT_SYS_INC', ROOT_SYS . '_inc/');
