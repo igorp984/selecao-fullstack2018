@@ -8,8 +8,8 @@ class GHeaderParent {
 
     var $_titulo = "";
     var $_metas = "";
-    var $_css = "";
-    var $_scripts = "";
+    var $_css = [];
+    var $_scripts = [];
     var $_bodyClass = "";
     var $_min = "min";
     var $_libs = array();

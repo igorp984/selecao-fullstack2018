@@ -48,7 +48,7 @@ $app->put('/proprietarios/{pro_int_codigo}', function (Request $request, Respons
 
 $app->delete('/proprietarios/{pro_int_codigo}', function (Request $request, Response $response) {
 	$pro_int_codigo = $request->getAttribute('pro_int_codigo');
-    
+    var_dump($pro_int_codigo);
     $proprietario = new Proprietario();
     $proprietario->setPro_int_codigo($pro_int_codigo);
 

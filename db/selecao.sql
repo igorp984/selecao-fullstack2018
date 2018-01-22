@@ -41,7 +41,7 @@ USE selecao_fullstack;
 DROP TABLE IF EXISTS raca;
 CREATE TABLE raca (
   rac_int_codigo INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Código',
-  rac_var_nome VARCHAR(90) NOT NULL COMMENT 'Nome',
+  rac_var_raca VARCHAR(90) NOT NULL COMMENT 'Nome',
   PRIMARY KEY (rac_int_codigo)
 )
 ENGINE = INNODB
@@ -83,9 +83,15 @@ CREATE TABLE animal (
   ani_var_nome VARCHAR(50) NOT NULL COMMENT 'Nome',
   ani_cha_vivo CHAR(1) NOT NULL DEFAULT 'S' COMMENT 'Vivo|S:Sim;N:Não',
   ani_dec_peso DECIMAL(8, 3) DEFAULT NULL COMMENT 'Peso',
-  ani_var_raca VARCHAR(50) DEFAULT NULL COMMENT 'Raça',
+  rac_int_codigo INT(11) UNSIGNED NOT NULL COMMENT 'Raça',
+  pro_int_codigo INT(11) UNSIGNED NOT NULL COMMENT 'Proprietário',
   ani_dti_inclusao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Inclusão',
-  PRIMARY KEY (ani_int_codigo)
+  PRIMARY KEY (ani_int_codigo),
+  CONSTRAINT FK_animal_raca_rac_int_codigo FOREIGN KEY (rac_int_codigo)
+    REFERENCES raca(rac_int_codigo) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT FK_animal_proprietario_pro_int_codigo FOREIGN KEY (pro_int_codigo)
+    REFERENCES proprietario(pro_int_codigo) ON DELETE RESTRICT ON UPDATE RESTRICT
+
 )
 ENGINE = INNODB
 AUTO_INCREMENT = 1
@@ -166,7 +172,7 @@ DELIMITER $$
 -- Definition for procedure sp_proprietario
 --
 DROP PROCEDURE IF EXISTS sp_proprietario_ins$$
-CREATE PROCEDURE `sp_proprietario_ins` (IN `p_pro_int_codigo` INT(11), IN `p_pro_var_nome` VARCHAR(50), IN `p_pro_var_email` VARCHAR(100), IN `p_pro_var_telefone` VARCHAR(14), INOUT `p_status` BOOLEAN, INOUT `p_msg` TEXT, INOUT `p_insert_id` INT(11))  
+CREATE PROCEDURE `sp_proprietario_ins` (IN `p_pro_var_nome` VARCHAR(50), IN `p_pro_var_email` VARCHAR(100), IN `p_pro_var_telefone` VARCHAR(14), INOUT `p_status` BOOLEAN, INOUT `p_msg` TEXT, INOUT `p_insert_id` INT(11))  
   SQL SECURITY INVOKER
   COMMENT 'Procedure de Inset'
 BEGIN
@@ -222,13 +228,19 @@ BEGIN
   END IF;
 
 END
-
+$$
 
 --
 -- Definition for procedure sp_proprietario_ins
 --
 DROP PROCEDURE IF EXISTS sp_proprietario_upd$$
-CREATE PROCEDURE `sp_proprietario_upd` (IN `p_pro_int_codigo` INT(11), IN `p_pro_var_nome` VARCHAR(50), IN `p_pro_var_email` VARCHAR(100), IN `p_pro_var_telefone` VARCHAR(14), INOUT `p_status` BOOLEAN, INOUT `p_msg` TEXT)  
+CREATE PROCEDURE `sp_proprietario_upd`(
+  IN p_pro_int_codigo INT(11), 
+  IN p_pro_var_nome VARCHAR(50), 
+  IN p_pro_var_email VARCHAR(100), 
+  IN p_pro_var_telefone VARCHAR(14), 
+  INOUT p_status BOOLEAN, 
+  INOUT p_msg TEXT)  
   SQL SECURITY INVOKER
   COMMENT 'Procedure de Update'
 BEGIN
@@ -299,7 +311,7 @@ BEGIN
   END IF;
 
 END
-
+$$
 --
 -- Definition for procedure sp_proprietario_del
 --
@@ -350,12 +362,12 @@ BEGIN
   END IF;
 
 END
-
+$$
 --
 -- Definition for procedure sp_raca_ins
 --
 DROP PROCEDURE IF EXISTS sp_raca_ins$$
-CREATE PROCEDURE `sp_raca_ins` (IN `p_rac_int_codigo` INT(11), IN `p_rac_var_raca` VARCHAR(50), INOUT `p_status` BOOLEAN, INOUT `p_msg` TEXT, INOUT `p_insert_id` INT(11))  
+CREATE PROCEDURE `sp_raca_ins` (IN `p_rac_var_raca` VARCHAR(50), INOUT `p_status` BOOLEAN, INOUT `p_msg` TEXT, INOUT `p_insert_id` INT(11))  
   SQL SECURITY INVOKER
   COMMENT 'Procedure de Inset'
 BEGIN
@@ -400,7 +412,7 @@ BEGIN
   END IF;
 
 END
-
+$$
 --
 -- Definition for procedure sp_raca_upd
 --
@@ -464,7 +476,7 @@ BEGIN
   END IF;
 
 END
-
+$$
 --
 -- Definition for procedure sp_raca_del
 --
@@ -515,7 +527,7 @@ BEGIN
   END IF;
 
 END
-
+$$
 
 --
 -- Definition for procedure sp_animalvacina_aplica
@@ -690,7 +702,7 @@ $$
 -- Definition for procedure sp_animal_ins
 --
 DROP PROCEDURE IF EXISTS sp_animal_ins$$
-CREATE PROCEDURE sp_animal_ins(IN p_ani_var_nome VARCHAR(50), IN p_ani_dec_peso DECIMAL(8,3), IN p_ani_var_raca VARCHAR(50), IN p_ani_cha_vivo CHAR(1), INOUT p_status BOOLEAN, INOUT p_msg TEXT, INOUT p_insert_id INT(11))
+CREATE PROCEDURE sp_animal_ins(IN p_ani_var_nome VARCHAR(50), IN p_ani_dec_peso DECIMAL(8,3), IN p_rac_int_codigo INT(11), IN p_pro_int_codigo INT(11), IN p_ani_cha_vivo CHAR(1), INOUT p_status BOOLEAN, INOUT p_msg TEXT, INOUT p_insert_id INT(11))
   SQL SECURITY INVOKER
   COMMENT 'Procedure de Insert'
 BEGIN
@@ -711,6 +723,12 @@ BEGIN
   IF p_ani_var_nome IS NULL THEN
     SET p_msg = concat(p_msg, 'Nome não informado.<br />');
   END IF;
+   IF p_pro_int_codigo IS NULL THEN
+    SET p_msg = concat(p_msg, 'Proprietário não informado.<br />');
+  END IF;
+   IF p_rac_int_codigo IS NULL THEN
+    SET p_msg = concat(p_msg, 'Raça não informada.<br />');
+  END IF;
   IF p_ani_cha_vivo IS NULL THEN
     SET p_msg = concat(p_msg, 'Status não informado.<br />');
   ELSE
@@ -723,14 +741,85 @@ BEGIN
 
     START TRANSACTION;
 
-    INSERT INTO animal (ani_var_nome, ani_dec_peso, ani_var_raca, ani_cha_vivo)
-    VALUES (p_ani_var_nome, p_ani_dec_peso, p_ani_var_raca, p_ani_cha_vivo);
+    INSERT INTO animal (ani_var_nome, ani_dec_peso, rac_int_codigo, pro_int_codigo, ani_cha_vivo)
+    VALUES (p_ani_var_nome, p_ani_dec_peso, p_rac_int_codigo, p_pro_int_codigo, p_ani_cha_vivo);
 
     COMMIT;
 
     SET p_status = TRUE;
     SET p_msg = 'Um novo registro foi inserido com sucesso.';
     SET p_insert_id = LAST_INSERT_ID();
+
+  END IF;
+
+END
+$$
+
+--
+-- Definition for procedure sp_animal_upd
+--
+DROP PROCEDURE IF EXISTS sp_animal_upd$$
+CREATE PROCEDURE sp_animal_upd(IN p_ani_int_codigo INT(11), IN p_rac_int_codigo INT(11), IN p_pro_int_codigo INT(11), IN p_ani_var_nome VARCHAR(50), IN p_ani_dec_peso DECIMAL(8,3), IN p_ani_cha_vivo CHAR(1), INOUT p_status BOOLEAN, INOUT p_msg TEXT)
+  SQL SECURITY INVOKER
+  COMMENT 'Procedure de Update'
+BEGIN
+
+  DECLARE v_existe boolean;
+
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    SET p_status = FALSE;
+    SET p_msg = 'Erro ao executar o procedimento.';
+  END;
+
+  SET p_msg = '';
+  SET p_status = FALSE;
+  
+  
+  -- VALIDAÇÕES
+  SELECT IF(count(1) = 0, FALSE, TRUE)
+  INTO v_existe
+  FROM animal
+  WHERE ani_int_codigo = p_ani_int_codigo;
+  IF NOT v_existe THEN
+    SET p_msg = concat(p_msg, 'Registro não encontrado.<br />');
+  END IF;
+
+  -- VALIDAÇÕES
+  IF p_ani_var_nome IS NULL THEN
+    SET p_msg = concat(p_msg, 'Nome não informado.<br />');
+  END IF;
+  IF p_ani_cha_vivo IS NULL THEN
+    SET p_msg = concat(p_msg, 'Status não informado.<br />');
+  ELSE
+    IF p_ani_cha_vivo NOT IN ('S','N') THEN
+      SET p_msg = concat(p_msg, 'Status inválido.<br />');
+    END IF;
+  END IF;
+  IF p_rac_int_codigo IS NULL THEN
+    SET p_msg = concat(p_msg, 'Raça Animal não informada.<br />');
+  END IF;
+  IF p_pro_int_codigo IS NULL THEN
+    SET p_msg = concat(p_msg, 'Proprietário não informado.<br />');
+  END IF;
+
+  IF p_msg = '' THEN
+
+    START TRANSACTION;
+
+    UPDATE animal
+    SET rac_int_codigo = p_rac_int_codigo,
+        pro_int_codigo = p_pro_int_codigo,
+        ani_var_nome = p_ani_var_nome,
+        ani_dec_peso = p_ani_dec_peso,
+        ani_cha_vivo = p_ani_cha_vivo
+    WHERE ani_int_codigo = p_ani_int_codigo;
+
+    COMMIT;
+
+    SET p_status = TRUE;
+    SET p_msg = 'Um novo registro foi inserido com sucesso.';
 
   END IF;
 
@@ -939,12 +1028,26 @@ $$
 DELIMITER ;
 
 
+--
+-- Definition for view vw_proprietario
+--
 DROP VIEW IF EXISTS vw_proprietario CASCADE;
 CREATE OR REPLACE
   SQL SECURITY INVOKER
 VIEW vw_proprietario
 AS
-  select `proprietario`.`pro_int_codigo` AS `pro_int_codigo`,`proprietario`.`pro_var_nome` AS `pro_var_nome`,`proprietario`.`pro_var_email` AS `pro_var_email`,`proprietario`.`pro_var_telefone` AS `pro_var_telefone`,`proprietario`.`pro_dti_cadastro` AS `pro_dti_cadastro`,date_format(`proprietario`.`pro_dti_cadastro`,'%d/%m/%Y %H:%i:%s') AS `pro_dtf_cadastro` from `proprietario`
+  select `proprietario`.`pro_int_codigo` AS `pro_int_codigo`,`proprietario`.`pro_var_nome` AS `pro_var_nome`,`proprietario`.`pro_var_email` AS `pro_var_email`,`proprietario`.`pro_var_telefone` AS `pro_var_telefone`,`proprietario`.`pro_dti_cadastro` AS `pro_dti_cadastro`,date_format(`proprietario`.`pro_dti_cadastro`,'%d/%m/%Y %H:%i:%s') AS `pro_dtf_cadastro` from `proprietario`;
+
+
+--
+-- Definition for view vw_raca
+--
+DROP VIEW IF EXISTS vw_raca CASCADE;
+CREATE OR REPLACE
+  SQL SECURITY INVOKER
+VIEW vw_raca
+AS
+  select `raca`.`rac_int_codigo` AS `rac_int_codigo`,`raca`.`rac_var_raca` AS `rac_var_raca` from `raca`;
 
 
 --
@@ -955,7 +1058,7 @@ CREATE OR REPLACE
   SQL SECURITY INVOKER
 VIEW vw_animal
 AS
-  select `animal`.`ani_int_codigo` AS `ani_int_codigo`,`animal`.`ani_var_nome` AS `ani_var_nome`,`animal`.`ani_dec_peso` AS `ani_dec_peso`,`animal`.`ani_var_raca` AS `ani_var_raca`,`animal`.`ani_cha_vivo` AS `ani_cha_vivo`,(case `animal`.`ani_cha_vivo` when 'S' then 'Sim' when 'N' then 'Não' end) AS `ani_var_vivo`,`animal`.`ani_dti_inclusao` AS `ani_dti_inclusao`,date_format(`animal`.`ani_dti_inclusao`,'%d/%m/%Y %H:%i:%s') AS `ani_dtf_inclusao` from `animal`;
+  select `animal`.`ani_int_codigo` AS `ani_int_codigo`, `animal`.`ani_var_nome` AS `ani_var_nome`,`animal`.`ani_dec_peso` AS `ani_dec_peso`,`animal`.`rac_int_codigo` AS `rac_int_codigo`,`raca`.`rac_var_raca` AS `rac_var_raca`, `proprietario`. `pro_var_nome` AS `pro_var_nome`,`animal`.`pro_int_codigo` AS `pro_int_codigo`,`animal`.`ani_cha_vivo` AS `ani_cha_vivo`,(case `animal`.`ani_cha_vivo` when 'S' then 'Sim' when 'N' then 'Não' end) AS `ani_var_vivo`,`animal`.`ani_dti_inclusao` AS `ani_dti_inclusao`,date_format(`animal`.`ani_dti_inclusao`,'%d/%m/%Y %H:%i:%s') AS `ani_dtf_inclusao` from `animal`  inner join `raca` `raca` on `animal`.`rac_int_codigo` = `raca`.`rac_int_codigo` inner join `proprietario` `proprietario` on `animal`.`pro_int_codigo` = `proprietario`.`pro_int_codigo`;
 
 
 --
@@ -991,6 +1094,12 @@ INSERT INTO vacina VALUES
 (1, 'Vanguard', '2016-03-25 15:03:35'),
 (2, 'Anti-rábica', '2016-03-25 15:03:44'),
 (3, 'Leshimune', '2016-03-25 15:04:15');
+
+INSERT INTO raca VALUES
+(1, 'Pastor Alemão'),
+(2, 'Pitbull'),
+(3, 'Persa'),
+(4, 'Siamês');
 
 
 --

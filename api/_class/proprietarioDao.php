@@ -7,7 +7,7 @@ class ProprietarioDao {
         $ret = array();
         try {
             $mysql = new GDbMysql();
-            $mysql->execute("SELECT pro_int_codigo,pro_var_nome,pro_var_email,pro_var_telefone,pro_dti_cadastro FROM vw_proprietario WHERE pro_int_codigo = ? ", array("i", $proprietario->getPro_int_codigo()), true, MYSQL_ASSOC);
+            $mysql->execute("SELECT pro_int_codigo,pro_var_nome,pro_var_email,pro_var_telefone,pro_dti_cadastro FROM vw_proprietario WHERE pro_int_codigo = ? ", array("i", $proprietario->getPro_int_codigo()), true, 'MYSQL_ASSOC');
             if ($mysql->fetch()) {
                 $ret = $mysql->res;
             }
@@ -49,7 +49,7 @@ class ProprietarioDao {
         $param = array("isss",$proprietario->getPro_int_codigo(),$proprietario->getPro_var_nome(),$proprietario->getPro_var_email(),$proprietario->getPro_var_telefone());
         try{
             $mysql = new GDbMysql();
-            $mysql->execute("CALL sp_pro_upd(?,?,?,?, @p_status, @p_msg);", $param, false);
+            $mysql->execute("CALL sp_proprietario_upd(?,?,?,?, @p_status, @p_msg);", $param, false);
             $mysql->execute("SELECT @p_status, @p_msg");
             $mysql->fetch();
             $return["status"] = ($mysql->res[0]) ? true : false;
@@ -67,6 +67,7 @@ class ProprietarioDao {
 
         $return = array();
         $param = array("i",$proprietario->getPro_int_codigo());
+        var_dump($param);
         try {
             $mysql = new GDbMysql();
             $mysql->execute("CALL sp_proprietario_del(?, @p_status, @p_msg);", $param, false);
