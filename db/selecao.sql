@@ -27,7 +27,7 @@ SET NAMES 'utf8';
 --
 CREATE DATABASE selecao_fullstack
   CHARACTER SET utf8
-  COLLATE utf8_general_ci;
+  COLLATE utf8_unicode_ci;
 
 --
 -- Set default database
@@ -48,7 +48,7 @@ ENGINE = INNODB
 AUTO_INCREMENT = 1
 AVG_ROW_LENGTH = 8192
 CHARACTER SET utf8
-COLLATE utf8_general_ci
+COLLATE utf8_unicode_ci
 COMMENT = 'Animal';
 
 --
@@ -70,7 +70,7 @@ ENGINE = INNODB
 AUTO_INCREMENT = 1
 AVG_ROW_LENGTH = 16384
 CHARACTER SET utf8
-COLLATE utf8_general_ci
+COLLATE utf8_unicode_ci
 COMMENT = 'Proprietário';
 
 
@@ -97,7 +97,7 @@ ENGINE = INNODB
 AUTO_INCREMENT = 1
 AVG_ROW_LENGTH = 8192
 CHARACTER SET utf8
-COLLATE utf8_general_ci
+COLLATE utf8_unicode_ci
 COMMENT = 'Animal';
 
 --
@@ -119,7 +119,7 @@ ENGINE = INNODB
 AUTO_INCREMENT = 1
 AVG_ROW_LENGTH = 16384
 CHARACTER SET utf8
-COLLATE utf8_general_ci
+COLLATE utf8_unicode_ci
 COMMENT = 'Usuario';
 
 --
@@ -136,7 +136,7 @@ ENGINE = INNODB
 AUTO_INCREMENT = 1
 AVG_ROW_LENGTH = 5461
 CHARACTER SET utf8
-COLLATE utf8_general_ci
+COLLATE utf8_unicode_ci
 COMMENT = 'Vacina';
 
 --
@@ -163,7 +163,7 @@ ENGINE = INNODB
 AUTO_INCREMENT = 1
 AVG_ROW_LENGTH = 16384
 CHARACTER SET utf8
-COLLATE utf8_general_ci
+COLLATE utf8_unicode_ci
 COMMENT = 'AnimalVacina||Agenda de Vacinação';
 
 DELIMITER $$
@@ -1091,7 +1091,7 @@ AS
 DROP VIEW IF EXISTS vw_animal_vacina CASCADE;
 CREATE OR REPLACE
   SQL SECURITY INVOKER
-VIEW vw_animal_vacina
+VIEW vw_animal_vacina 
 AS
   select `animal_vacina`.`anv_int_codigo` AS `anv_int_codigo`,`animal_vacina`.`ani_int_codigo` AS `ani_int_codigo`,`animal`.`ani_var_nome` AS `ani_var_nome`,`animal_vacina`.`vac_int_codigo` AS `vac_int_codigo`,`vacina`.`vac_var_nome` AS `vac_var_nome`,`animal_vacina`.`anv_dat_programacao` AS `anv_dat_programacao`,date_format(`animal_vacina`.`anv_dat_programacao`,'%d/%m/%Y') AS `anv_dtf_programacao`,`animal_vacina`.`anv_dti_aplicacao` AS `anv_dti_aplicacao`,date_format(`animal_vacina`.`anv_dti_aplicacao`,'%d/%m/%Y  %H:%i:%s') AS `anv_dtf_aplicacao`,  
   `animal_vacina`.`usu_int_codigo` AS `usu_int_codigo`,`usuario`.`usu_var_nome` AS `usu_var_nome` from `animal_vacina` inner join `animal` on `animal_vacina`.`ani_int_codigo` = `animal`.`ani_int_codigo` inner join `vacina` on `animal_vacina`.`vac_int_codigo` = `vacina`.`vac_int_codigo` left join `usuario` on `animal_vacina`.`usu_int_codigo` = `usuario`.`usu_int_codigo`;
