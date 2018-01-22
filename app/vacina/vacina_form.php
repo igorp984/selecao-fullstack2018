@@ -48,11 +48,17 @@ echo $htmlForm;
                 var usu_int_codigo = $('#usu_int_codigo_text').val();
                 console.log(usu_int_codigo);
                 if ($('#acao').val() == 'ins') {
-                    var endpoint = URL_API + 'animais_vacinas';
+                    var endpoint = URL_API + 'vacinacoes';
                 }
                 else {
-                    var endpoint = URL_API + 'animais_vacinas/' + anv_int_codigo;
-                    if (usu_int_codigo) endpoint += '/vacinar'
+                    var endpoint = URL_API + 'vacinacoes/';
+                    if (usu_int_codigo) {
+                        endpoint += '/vacinar'  + anv_int_codigo;
+                    }
+                    else {
+                        endpoint += '' + anv_int_codigo;
+                    }
+                        
                 }
                 console.log(endpoint);
                 $.gAjax.exec(method, endpoint, $('#form').serializeArray(), false, function(json) {
@@ -70,7 +76,7 @@ echo $htmlForm;
         $('#f__btn_excluir').click(function() {
             var anv_int_codigo = $('#anv_int_codigo').val();
             $.gDisplay.showYN("Quer realmente deletar o item selecionado?", function() {
-                $.gAjax.exec('DELETE', URL_API + 'animais_vacinas/' + anv_int_codigo, false, false, function(json) {
+                $.gAjax.exec('DELETE', URL_API + 'vacinacoes/' + anv_int_codigo, false, false, function(json) {
                     if (json.status) {
                         showList(true);
                     }

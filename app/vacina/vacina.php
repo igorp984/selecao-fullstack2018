@@ -4,7 +4,7 @@ require_once '../_inc/global.php';
 $form = new GForm();
 $header = new GHeader('Vacinações');
 $header->addLib(array('paginate', 'maskMoney'));
-$header->show(false, 'aplicar_vacina/aplicar_vacina.php');
+$header->show(false, 'vacina/vacina.php');
 // ---------------------------------- Header ---------------------------------//
 $html .= '<div id="divTable" class="row">';
 $html .= getWidgetHeader();
@@ -15,7 +15,7 @@ $html .= getBotoesFiltro();
 $html .= getBotaoProgramarVacina();
 $html .= $form->close();
 //</editor-fold>
-$paginate = new GPaginate('animal_vacina', 'animal_vacina_load.php', SYS_PAGINACAO);
+$paginate = new GPaginate('vacina', 'vacina_load.php', SYS_PAGINACAO);
 $html .= $paginate->get();
 $html .= '</div>'; //divTable
 $html .= getWidgetFooter();
@@ -28,11 +28,11 @@ $footer = new GFooter();
 $footer->show();
 ?>
 <script>
-    var pagCrud = 'animal_vacina_crud.php';
-    var pagView = 'animal_vacina_view.php';
-    var pagLoad = 'animal_vacina_load.php';
+    var pagCrud = 'vacina_crud.php';
+    var pagView = 'vacina_view.php';
+    var pagLoad = 'vacina_load.php';
     function filtrar(page) {
-        animal_vacinaLoad('', '', '', $('#filter').serializeObject(), page);
+        vacinaLoad('', '', '', $('#filter').serializeObject(), page);
         return false;
     }
     $(function() {
@@ -94,7 +94,7 @@ $footer->show();
             scrollTop();
             unselectLines();
             showForm('divForm', 'ins', 'Adicionar');
-            configFormAdicionar();
+            Adicionar();
         });
         $(document).on('click', '.l__btn_editar', function() {            
             var anv_int_codigo = $(this).parents('tr.linhaRegistro').attr('id');
@@ -102,10 +102,10 @@ $footer->show();
             scrollTop();
             selectLine(anv_int_codigo);
             
-            loadForm(URL_API + 'animais_vacinas/' + anv_int_codigo, function(json) {
+            loadForm(URL_API + 'vacinacoes/' + anv_int_codigo, function(json) {
                 showForm('divForm', 'upd', 'Editar');
             });
-            configFormAdicionar();
+            Adicionar();
         });
         $(document).on('click', '.l__btn_vacinar', function() {
             
@@ -114,7 +114,7 @@ $footer->show();
             
             scrollTop();
             selectLine(anv_int_codigo);
-            loadForm(URL_API + 'animais_vacinas/' + anv_int_codigo, function(json) {
+            loadForm(URL_API + 'vacinacoes/' + anv_int_codigo, function(json) {
                 showForm('divForm', 'upd', 'Vacinar');
             });
             configFormVacinar();
@@ -122,7 +122,7 @@ $footer->show();
         $(document).on('click', '.l__btn_excluir', function() {
             var anv_int_codigo = $(this).parents('tr.linhaRegistro').attr('id');
             $.gDisplay.showYN("Quer realmente deletar o item selecionado?", function() {
-                $.gAjax.exec('DELETE', URL_API + 'animais_vacinas/' + anv_int_codigo, false, false, function(json) {
+                $.gAjax.exec('DELETE', URL_API + 'vacinacoes/' + anv_int_codigo, false, false, function(json) {
                     if (json.status) {
                         filtrar();
                     }

@@ -52,7 +52,6 @@ $app->put('/animais/{ani_int_codigo}', function (Request $request, Response $res
     $animal->setAni_dec_peso($body['ani_dec_peso']);
     $animal->setAni_rac_int_raca($body['rac_int_codigo']);
     $animal->setAni_pro_int_codigo($body['pro_int_codigo']);
-    var_dump($animal);
     $data = AnimalDao::update($animal);
     $code = ($data['status']) ? 200 : 500;
 

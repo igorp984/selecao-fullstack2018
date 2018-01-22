@@ -51,7 +51,7 @@ class AnimalDao {
 
 
         $return = array();
-        $param = array("isdiis",
+        $param = array("iiisds",
             $animal->getAni_int_codigo(),
            $animal->getAni_rac_int_codigo(),
             $animal->getAni_pro_int_codigo(),
