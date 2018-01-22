@@ -233,14 +233,11 @@ $$
 --
 -- Definition for procedure sp_proprietario_ins
 --
+--
+-- Definition for procedure sp_usuario_upd
+--
 DROP PROCEDURE IF EXISTS sp_proprietario_upd$$
-CREATE PROCEDURE `sp_proprietario_upd`(
-  IN p_pro_int_codigo INT(11), 
-  IN p_pro_var_nome VARCHAR(50), 
-  IN p_pro_var_email VARCHAR(100), 
-  IN p_pro_var_telefone VARCHAR(14), 
-  INOUT p_status BOOLEAN, 
-  INOUT p_msg TEXT)  
+CREATE PROCEDURE sp_proprietario_upd(IN p_pro_int_codigo INT(11), IN p_pro_var_nome VARCHAR(50), IN p_pro_var_email VARCHAR(100), IN p_pro_var_telefone VARCHAR(14), INOUT p_status BOOLEAN, INOUT p_msg TEXT)
   SQL SECURITY INVOKER
   COMMENT 'Procedure de Update'
 BEGIN
@@ -290,7 +287,7 @@ BEGIN
   WHERE pro_var_email = p_pro_var_email
         AND pro_int_codigo <> p_pro_int_codigo;
   IF v_existe THEN
-    SET p_msg = concat(p_msg, 'Já existe usuário com este email.<br />');
+    SET p_msg = concat(p_msg, 'Já existe proprietário com este email.<br />');
   END IF;
 
   IF p_msg = '' THEN
@@ -300,7 +297,7 @@ BEGIN
     UPDATE proprietario
     SET pro_var_nome = p_pro_var_nome,
         pro_var_email = p_pro_var_email,
-        pro_pro_telefone = p_pro_var_telefone
+        pro_var_telefone = p_pro_var_telefone
     WHERE pro_int_codigo = p_pro_int_codigo;
 
     COMMIT;
@@ -312,6 +309,7 @@ BEGIN
 
 END
 $$
+
 --
 -- Definition for procedure sp_proprietario_del
 --
@@ -417,7 +415,7 @@ $$
 -- Definition for procedure sp_raca_upd
 --
 DROP PROCEDURE IF EXISTS sp_raca_upd$$
-CREATE PROCEDURE `sp_raca_upd` (IN `p_rac_int_codigo` INT(11), IN `p_rac_var_raca` VARCHAR(50), INOUT `p_status` BOOLEAN, INOUT `p_msg` TEXT)  
+CREATE PROCEDURE sp_raca_upd (IN p_rac_int_codigo INT(11), IN p_rac_var_raca VARCHAR(50), INOUT p_status BOOLEAN, INOUT p_msg TEXT)  
   SQL SECURITY INVOKER
   COMMENT 'Procedure de Update'
 BEGIN
@@ -798,7 +796,7 @@ BEGIN
     END IF;
   END IF;
   IF p_rac_int_codigo IS NULL THEN
-    SET p_msg = concat(p_msg, 'Raça Animal não informada.<br />');
+    SET p_msg = concat(p_msg, 'Raça animal não informada.<br />');
   END IF;
   IF p_pro_int_codigo IS NULL THEN
     SET p_msg = concat(p_msg, 'Proprietário não informado.<br />');
@@ -948,7 +946,13 @@ $$
 -- Definition for procedure sp_usuario_upd
 --
 DROP PROCEDURE IF EXISTS sp_usuario_upd$$
-CREATE PROCEDURE sp_usuario_upd(IN p_usu_int_codigo INT(11), IN p_usu_var_nome VARCHAR(50), IN p_usu_var_email VARCHAR(100), IN p_usu_cha_status CHAR(1), INOUT p_status BOOLEAN, INOUT p_msg TEXT)
+CREATE PROCEDURE sp_usuario_upd(
+  IN p_usu_int_codigo INT(11), 
+  IN p_usu_var_nome VARCHAR(50), 
+  IN p_usu_var_email VARCHAR(100), 
+  IN p_usu_cha_status CHAR(1), 
+  INOUT p_status BOOLEAN, 
+  INOUT p_msg TEXT)
   SQL SECURITY INVOKER
   COMMENT 'Procedure de Update'
 BEGIN

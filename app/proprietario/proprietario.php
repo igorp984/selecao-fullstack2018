@@ -75,7 +75,7 @@ $footer->show();
             });
         });
         $(document).on('click', '.l__btn_excluir', function() {
-            var usu_int_codigo = $(this).parents('tr.linhaRegistro').attr('id');
+            var pro_int_codigo = $(this).parents('tr.linhaRegistro').attr('id');
 
             $.gDisplay.showYN("Quer realmente deletar o item selecionado?", function() {
                 $.gAjax.exec('DELETE', URL_API + 'proprietarios/' + pro_int_codigo, false, false, function(json) {

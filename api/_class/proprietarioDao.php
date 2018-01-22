@@ -44,12 +44,14 @@ class ProprietarioDao {
 
     /** @param Usuario $usuario */
     public static function update($proprietario) {
-
+        
         $return = array();
         $param = array("isss",$proprietario->getPro_int_codigo(),$proprietario->getPro_var_nome(),$proprietario->getPro_var_email(),$proprietario->getPro_var_telefone());
+        
         try{
             $mysql = new GDbMysql();
             $mysql->execute("CALL sp_proprietario_upd(?,?,?,?, @p_status, @p_msg);", $param, false);
+
             $mysql->execute("SELECT @p_status, @p_msg");
             $mysql->fetch();
             $return["status"] = ($mysql->res[0]) ? true : false;
@@ -64,10 +66,9 @@ class ProprietarioDao {
 
     /** @param Usuario $usuario */
     public static function delete($proprietario) {
-
         $return = array();
         $param = array("i",$proprietario->getPro_int_codigo());
-        var_dump($param);
+
         try {
             $mysql = new GDbMysql();
             $mysql->execute("CALL sp_proprietario_del(?, @p_status, @p_msg);", $param, false);

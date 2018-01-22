@@ -53,13 +53,13 @@ class AnimalDao {
         $return = array();
         $param = array("isdiis",
             $animal->getAni_int_codigo(),
-           $animal->getAni_var_nome(),
-            $animal->getAni_dec_peso(),
-            $animal->getAni_rac_int_codigo(),
+           $animal->getAni_rac_int_codigo(),
             $animal->getAni_pro_int_codigo(),
+            $animal->getAni_var_nome(),
+            $animal->getAni_dec_peso(),
             $animal->getAni_cha_vivo()
             ); 
-        var_dump($param);
+        
         try{
             $mysql = new GDbMysql();
             $mysql->execute("CALL sp_animal_upd(?,?,?,?,?,?, @p_status, @p_msg);", $param, false);
@@ -77,7 +77,7 @@ class AnimalDao {
 
     /** @param Animal $animal */
     public function delete($animal) {
-
+        
         $return = array();
         $param = array("i",$animal->getAni_int_codigo());
         try {

@@ -47,10 +47,11 @@ echo $htmlForm;
         });
 
         $('#f__btn_excluir').click(function() {
-            var usu_int_codigo = $('#usu_int_codigo').val();
+            var pro_int_codigo = $('#pro_int_codigo').val();
 
             $.gDisplay.showYN("Quer realmente deletar o item selecionado?", function() {
-                $.gAjax.exec('DELETE', URL_API + 'proprietarios/' + pro_int_codigo, false, false, function(json) {
+               
+                $.gAjax.exec('DELETE', URL_API + 'proprietarios/' + 1, false, false, function(json) {
                     if (json.status) {
                         showList(true);
                     }
