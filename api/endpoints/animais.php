@@ -21,8 +21,7 @@ $app->get('/animais/{ani_int_codigo}', function (Request $request, Response $res
 $app->post('/animais', function (Request $request, Response $response) {
     $body = $request->getParsedBody();
 
-    $spliti = explode(",", $body['ani_dec_peso']);
-    $body['ani_dec_peso'] = $spliti[0] . '.'. $spliti[1]; 
+    $body['ani_dec_peso'] = str_replace(',', '.', str_replace('.', '',$body['ani_dec_peso'])); 
 
     $animal = new Animal();
     $animal->setAni_var_nome($body['ani_var_nome']);
@@ -43,8 +42,7 @@ $app->put('/animais/{ani_int_codigo}', function (Request $request, Response $res
     $body = $request->getParsedBody();
 	$ani_int_codigo = $request->getAttribute('ani_int_codigo');
     
-    $spliti = explode(",", $body['ani_dec_peso']);
-    $body['ani_dec_peso'] = $spliti[0] . '.'. $spliti[1]; 
+     $body['ani_dec_peso'] = str_replace(',', '.', str_replace('.', '',$body['ani_dec_peso']));
 
     $animal = new Animal();
 
@@ -54,7 +52,7 @@ $app->put('/animais/{ani_int_codigo}', function (Request $request, Response $res
     $animal->setAni_dec_peso($body['ani_dec_peso']);
     $animal->setAni_rac_int_raca($body['rac_int_codigo']);
     $animal->setAni_pro_int_codigo($body['pro_int_codigo']);
-    
+    var_dump($animal);
     $data = AnimalDao::update($animal);
     $code = ($data['status']) ? 200 : 500;
 

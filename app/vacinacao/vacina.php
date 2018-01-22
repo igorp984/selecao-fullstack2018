@@ -12,7 +12,7 @@ $html .= getWidgetHeader();
 $html .= $form->open('filter', 'form-inline filterForm');
 $html .= $form->addInput('text', 'p__ani_var_nome', false, array('placeholder' => 'Nome do Animal', 'class' => 'sepV_b m-wrap small'), false, false, false);
 $html .= getBotoesFiltro();
-$html .= getBotaoAdicionarProgramacaoVacina();
+$html .= getBotaoProgramarVacina();
 $html .= $form->close();
 //</editor-fold>
 $paginate = new GPaginate('animal_vacina', 'animal_vacina_load.php', SYS_PAGINACAO);
@@ -21,7 +21,7 @@ $html .= '</div>'; //divTable
 $html .= getWidgetFooter();
 echo $html;
 echo '<div id="divForm" class="row divForm">';
-include 'animal_vacina_form.php';
+include 'vacina_form.php';
 echo '</div>';
 // ---------------------------------- Footer ---------------------------------//
 $footer = new GFooter();
@@ -60,7 +60,7 @@ $footer->show();
             clearForm('#filter');
             filtrar(1);
         });
-        function configFormAdicionar() {
+        function Adicionar() {
             ani_int_codigo.show();
             ani_int_codigo.attr('validate', 'required');
             lbl_ani_int_codigo.show();

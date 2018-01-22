@@ -13,7 +13,7 @@ $htmlForm .= $form->addInput('hidden', 'ani_int_codigo', false, array('value' =>
 $htmlForm .= $form->addInput('text', 'ani_var_nome', 'Nome*', array('maxlength' => '50', 'validate' => 'required'));
 $htmlForm .= $form->addSelect('ani_cha_vivo', array('S' => 'Sim', 'N' => 'Não'), '', 'Vivo*', array('validate' => 'required'), false, false, true, '', 'Selecione...');
 
-$htmlForm .= $form->addInput('text', 'ani_dec_peso', 'Peso*', array('maxlength' => '100', 'validate' => 'required'));
+$htmlForm .= $form->addInput('text', 'ani_dec_peso', 'Peso*', array('maxlength' => '10', 'validate' => 'required'));
 //$htmlForm .= $form->addInput('text', 'ani_var_raca', 'Raça*', array('maxlength' => '100', 'validate' => 'required'));
 
 $proprietario = [];
