@@ -37,7 +37,7 @@ try {
         $filter->setOrder(array('pro_var_nome' => 'ASC'));
         $filter->setLimit($start, $rp);
 
-        $query = "SELECT pro_int_codigo, pro_var_nome, pro_var_email, pro_var_tel FROM vw_proprietario " . $filter->getWhere();
+        $query = "SELECT pro_int_codigo, pro_var_nome, pro_var_email, pro_var_telefone FROM vw_proprietario " . $filter->getWhere();
         $param = $filter->getParam();
 
         $mysql->execute($query, $param);
